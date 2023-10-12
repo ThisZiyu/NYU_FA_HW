@@ -4,50 +4,29 @@ import json
 
 app = Flask(__name__)
 
-# Initialize variables to store AS information
-ip = None
-as_ip = None
-as_port = None
-hostname = None
-
-# Function to register with the Authoritative Server (AS)
-def register_with_as():
-    data = json.loads(request.data)
-    hostname = data.get('hostname')
-    ip = data.get('ip')
-    as_ip = data.get('as_ip')
-    as_port = data.get('as_port')
-
-    if None in (hostname, ip, as_ip, as_port):
-        return jsonify({'error': 'Bad request'}), 400
-    else:
-        client = socket(AF_INET, SOCK_DGRAM)
-        msg = "Type=A\nName={}\n".format(hostname)
-        client.sendto(msg.encode(), (as_ip, as_port))
-        msg_back, IPaddress = client.recvfrom(1024)
-        client.close()
-        if msg_back.decode()=='Successful Registration':
-            return True
-    return False
 
 @app.route('/register', methods=['PUT'])
 def register():
-    global hostname, as_ip, as_port
-
     try:
-        data = json.loads(request.data)
+        data = request.get_json()
         hostname = data.get('hostname')
+        ip = data.get('ip')
         as_ip = data.get('as_ip')
         as_port = data.get('as_port')
+        #print(data)
 
-        if not (hostname and as_ip and as_port):
+        if None in (hostname, ip, as_ip, as_port):
             return jsonify({'error': 'Bad request'}), 400
-
-        # Register with the Authoritative Server (AS)
-        if register_with_as():
-            return jsonify({'message': 'Registered successfully'}), 201
         else:
-            return jsonify({'error': 'Registration failed'}), 500
+            client = socket(AF_INET, SOCK_DGRAM)
+            msg = "Type=A\nName={}\nVALUE={}\nTTL=10".format(hostname,ip)
+            client.sendto(msg.encode(), (as_ip, int(as_port)))
+            msg_back, IPaddress = client.recvfrom(1024)
+            print(msg_back.decode())
+            client.close()
+            if msg_back.decode() == 'Success':
+                return jsonify({'message': 'Registered successfully'}), 201
+        return jsonify({'error': 'Registration failed'}), 500
 
     except json.JSONDecodeError:
         return jsonify({'error': 'Invalid JSON format'}), 400
