@@ -22,7 +22,7 @@ def register_with_as():
         return jsonify({'error': 'Bad request'}), 400
     else:
         client = socket(AF_INET, SOCK_DGRAM)
-        msg = "Type=A\nname={}".format(hostname)
+        msg = "Type=A\nName={}\n".format(hostname)
         client.sendto(msg.encode(), (as_ip, as_port))
         msg_back, IPaddress = client.recvfrom(1024)
         client.close()
@@ -64,7 +64,7 @@ def calculate_fibonacci():
 
         # Calculate Fibonacci number for the sequence number
         result = calculate_fibonacci_value(n)
-        return jsonify({'result': result}), 200
+        return jsonify('The fibonacci value of {} is {}'.format(number,result)), 200
     except ValueError:
         return jsonify({'error': 'Bad request, number must be an integer'}), 400
 
