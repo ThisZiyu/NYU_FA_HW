@@ -1,3 +1,4 @@
+import logging
 from socket import *
 from flask import Flask, request, jsonify
 import requests
@@ -31,11 +32,11 @@ def calculate_fibonacci():
     client.close()
 
     print(msg_back.decode())
-    result, output = splitmsg(msg_back.decode())
-    print(result,output)
+    logging.info(msg_back.decode())
+    name,output = splitmsg(msg_back.decode())
 
     # Make a request to this service with the result from AS
-    r = requests.get(f"/fibonacci?hostname={output}&fs_port={fs_port}&number={number}&as_ip={as_ip}&as_port={as_port}")
+    r = requests.get(f"/fibonacci?hostname=fibonacci.com&fs_port={fs_port}&number={number}&as_ip={as_ip}&as_port={as_port}")
     return jsonify(r.json()), 200
 
 
