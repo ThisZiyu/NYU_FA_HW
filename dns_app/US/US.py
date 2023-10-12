@@ -31,14 +31,11 @@ def calculate_fibonacci():
     msg_back, _ = client.recvfrom(1024)
     client.close()
 
-    print(msg_back.decode())
     logging.info(msg_back.decode())
     name,output = splitmsg(msg_back.decode())
-
     # Make a request to this service with the result from AS
-    r = requests.get(f"/fibonacci?hostname=fibonacci.com&fs_port={fs_port}&number={number}&as_ip={as_ip}&as_port={as_port}")
+    r = requests.get(f"http://{output}:{fs_port}/fibonacci?number={number}")
     return jsonify(r.json()), 200
-
 
 def splitmsg(msg):
     msg = msg.split('\n')
