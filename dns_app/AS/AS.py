@@ -36,7 +36,7 @@ while True:
     if 'VALUE' in data.decode():
         print("Register")
         response = handle_registration(data)
-        sock.sendto("Successful Registration".encode(),addr)
+        sock.sendto("Success".encode(),addr)
     else:
         print("Query")
         response = handle_dns_query(data)
