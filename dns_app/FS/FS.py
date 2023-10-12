@@ -26,8 +26,7 @@ def register_with_as():
         client.sendto(msg.encode(), (as_ip, as_port))
         msg_back, IPaddress = client.recvfrom(1024)
         client.close()
-        msg_back_decode = msg_back.decode()
-        if msg_back_decode=='Success':
+        if msg_back.decode()=='Successful Registration':
             return True
     return False
 
