@@ -26,14 +26,14 @@ def handle_dns_query(data):
 sock = socket(AF_INET,SOCK_DGRAM)
 sock.bind(('', PORT))
 
-print(f"AS listening on port {PORT}")
+# print(f"AS listening on port {PORT}")
 
 while True:
     data, addr = sock.recvfrom(1024)
     response = None
 
     # Check if it's a registration request or a DNS query
-    if 'Output' in data.decode():
+    if 'VALUE' in data.decode():
         print("Register")
         response = handle_registration(data)
         sock.sendto("Successful Registration".encode(),addr)
